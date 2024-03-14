@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+   <meta charset="utf-8">
+   <title>Form Test</title>
+   <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+</head>
+<body>
+   <div id="Form" style="float:left; width:40%">
+      <h2>Form2 ==> Submit User Data</h2>
+      <hr>
+      姓名 : <input type="text" id="u_name" maxlength="50"><br>
+      手機 : <input type="text" id="u_mobile" placeholder="09XXXXXXXX" maxlength="10"><br>
+      郵遞區號 : <input type="text" id="u_zip" maxlength="5"><br>
+      地址 : <input type="text" id="u_addr" maxlength="50"><br>
+      機票 : <input type="text" id="u_ticket" placeholder="803XXXXXXXXXX" maxlength="13"><br>
+      <button id="Bu_Submit">Submit</button><br>
+      <hr>
+      <span>
+         Input : <br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - func = submit<br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - data = object ==> {'u_name':'','u_mobile':'','u_addr':'','u_zip':'','u_ticket':''}<br>
+         Output : <br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - 成功 ==> ok = 1<br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - 失敗 (機票號己經登錄過) ==> ok = 0<br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - 失敗 (有格式錯誤) ==> ok = -1, fields = array (格式有問題的欄位)<br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - 失敗 (有資料未填) ==> ok = -2, fields = array (資料沒填的欄位)<br>
+         &nbsp;&nbsp;&nbsp;&nbsp; - 失敗 (非活動期間) ==> ok = -3<br>
+      </span>
+   </div>
+   <script>
+      var dataInfo = {'u_name':'','u_mobile':'','u_zip':'','u_addr':'','u_ticket':''};
+      $('#Bu_Submit').on('click', function() {
+         dataInfo.u_name=$('#u_name').val();
+         dataInfo.u_mobile=$('#u_mobile').val();
+         dataInfo.u_zip=$('#u_zip').val();
+         dataInfo.u_addr=$('#u_addr').val();
+         dataInfo.u_ticket=$('#u_ticket').val();
+
+         var $request = $.ajax({
+            url: "func.php",
+            type: "POST",
+            data: {
+               func: 'submit',
+               data: dataInfo
+            },
+            timeout: 30*1000,   //waiting timeout 30sec
+            dataType: "json"
+         }).done(function(data) {
+            switch (toNumber(data.ok)) {
+               case 1:
+                  alert('成功送出')
+                  $('input').val('');
+                  break;
+               case 0:
+                  alert('機票號碼已登記過');
+                  break;
+               case -1:
+                  alert("有欄位格式有問題 ==> "+data.fields)
+                  break;
+               case -2:
+                  alert("有欄位沒填資料 ==> "+data.fields)
+                  break;
+               case -3:
+                  alert("目前不在活動期間");
+                  $('input').val('');
+                  break;
+
+            }
+         });
+      });
+      function toNumber(strNumber) {
+         return +strNumber;
+      }
+   </script>
+</body>
+</html>

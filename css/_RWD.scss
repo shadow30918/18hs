@@ -1,0 +1,56 @@
+$mb-440:440px;
+$pc-m:1024px;
+$pc-l:1920px;
+
+$mb-440-inner:440px;
+$pc-m-inner:960px;
+$pc-l-inner:1160px;
+
+
+//pc-s
+ @mixin mb-440() {
+    @media all and (min-width: $mb-440) {
+        @content;
+    }
+}
+//pc-m
+ @mixin pc-m() {
+    @media all and (min-width:$pc-m) {
+        @content;
+    }
+}
+//pc-l
+ @mixin pc-l() {
+    @media all and (min-width: $pc-l) {
+        @content;
+    }
+}
+
+
+
+.inner{
+    @include mb-440{
+        width: $mb-440-inner;
+        position: relative;
+        margin: 0 auto;
+        height: 100%;;
+    }
+    @include pc-m{
+        width: $pc-m-inner;
+    }
+    @include pc-l{
+        width: $pc-l-inner;
+    } 
+}
+
+@mixin RWD-font-size($s,$m,$l){
+    @include mb-440 {
+        font-size: $s;
+    }
+    @include pc-m {
+        font-size: $m;
+    }
+    @include pc-l {
+        font-size: $l;
+    }
+}
